@@ -61,18 +61,33 @@ namespace project_r2.Controllers
         {
             //byte[] b64 = Convert.FromBase64String(r.Dataset);
             //string decoded = Encoding.UTF8.GetString(b64);
-            string b64 = r.Dataset;
-            string b64_lined = SpliceText(b64, 400);
+            /* Implement this
+             * https://stackoverflow.com/questions/49623768/an-unhandled-exception-of-type-system-stackoverflowexception-occurred-in-rdotn
+             */
+            string b64_lined = SpliceText(r.dataset, 400);
+            string type = "";
+            string libs = "";
+            switch(r.command)
+            {
+                case "boxplot":
+                    type = string.Format("boxplot({0}~{1}, data)", r.formula_x, r.formula_y);
+                    break;
+                case "ggplot2":
+                    libs = "library(ggplot2)";
+                    type = string.Format(@"ggplot(data, aes(x = {0}, y = {1})) + geom_point(color = ""steelblue"") + geom_smooth(method = ""lm"")", r.formula_x, r.formula_y);
+                    break;
+            }
 
-            string cmd = string.Format(@"b64data = ""{0}""
+            string cmd = string.Format(@"{0}
+            b64data = ""{1}""
             decoded = rawToChar(base64enc::base64decode(b64data))
-            data = read.csv(text = decoded)
+            data = read.csv(text = decoded, sep = {2})
             fn = tempfile(fileext = '.png')
             png(fn)
-            boxplot(sepal.length~variety, data)
+            {3}
             dev.off()
             encoded = base64enc::base64encode(fn)
-            ", b64_lined);
+            ", libs, b64_lined, r.delimiter, type);
 
             //Console.WriteLine(cmd);
             engine.Evaluate(cmd);

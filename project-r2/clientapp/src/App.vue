@@ -3,11 +3,11 @@
     <Header></Header>
     <Navigation></Navigation>
     <v-main class="scrollable">
+      <div class="pa-8">
         <transition name="fade" mode="out-in">
-            <div class="pa-8">
-              <router-view />
-            </div>
+          <router-view class="view"></router-view>
         </transition>
+      </div>
     </v-main>
     <Alert></Alert>
   </v-app>
@@ -32,3 +32,18 @@ export default {
   }),
 };
 </script>
+
+<style>
+  .fade-enter-active, .fade-leave-active {
+    width: inherit;
+    transition: opacity .2s;
+  }
+
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+
+  .view > div  {
+    transition: height .2s;
+  }
+</style>

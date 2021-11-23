@@ -38,6 +38,11 @@ export default {
                 path: '/import',
             },
             {
+                icon: 'mdi-database-search',
+                title: 'Dataset Explorer',
+                path: '/explorer',
+            },
+            {
                 icon: 'mdi-math-integral-box',
                 title: 'Compute',
                 path: '/compute',

@@ -1,5 +1,26 @@
 <template>
     <div class="about">
-        <h1>This is an about page</h1>
+        <v-card outlined>
+            <v-card-title>About Project R</v-card-title>
+            <v-card-text>
+                <div class="mb-2">This app was developed as semester project by Nikolas Trentin, TRE0059.</div>
+                <div class="mb-2">You can find the source code of this project here: <a href="https://github.com/nikotren/project-r2">https://github.com/nikotren/project-r2</a></div>
+                <h4>Project R is powered by these open sourced modules:</h4>
+                <h5>Front-end</h5>
+                <ul>
+                    <li>Vue 2.6.14 (<a href="https://github.com/vuejs/vue" target="_blank">https://github.com/vuejs/vue</a>)</li>
+                    <li>Vuetify 2.5.12 (<a href="https://github.com/vuetifyjs/vuetify" target="_blank">https://github.com/vuetifyjs/vuetify</a>)</li>
+                    <li>Vue Router 3.5.3 (<a href="https://github.com/vuejs/vue-router" target="_blank">https://github.com/vuejs/vue-router</a>)</li>
+                    <li>Axios 0.24 (<a href="https://github.com/axios/axios" target="_blank">https://github.com/axios/axios</a>)</li>
+                    <li>PapaParse 5.3.1 (<a href="https://github.com/mholt/PapaParse" target="_blank">https://github.com/mholt/PapaParse</a>)</li>
+                </ul>
+                <h5>Back-end</h5>
+                <ul>
+                    <li>ASP.NET Core MVC</li>
+                    <li>Vue CLI Middleware 5.0.0</li>
+                    <li>R.Net 1.9.0 (<a href="https://github.com/rdotnet/rdotnet" target="_blank">https://github.com/rdotnet/rdotnet</a>)</li>
+                </ul>
+            </v-card-text>
+        </v-card>
     </div>
 </template>
