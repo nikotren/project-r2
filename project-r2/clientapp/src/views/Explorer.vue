@@ -23,19 +23,6 @@
             dense
             multi-sort
         >
-            <template v-slot:item.actions="{ item }">
-                <v-icon
-                    class="mr-2"
-                    color="green lighten-1"
-                    @click="editItem(item)"
-                >mdi-pencil
-                </v-icon>
-                <v-icon
-                    color="red lighten-1"
-                    @click="deleteItem(item)"
-                >mdi-delete
-                </v-icon>
-            </template>
         </v-data-table>
     </v-card>
 </template>
@@ -65,13 +52,6 @@ export default {
                 text:   e,
                 value:  e,
             });
-        });
-        h.push({
-            text:       'Actions',
-            value:      'actions',
-            align:      'right',
-            sortable:   false,
-            searchable: false,
         });
         this.headers = h;
         this.loading = false;

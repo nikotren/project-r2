@@ -13,18 +13,18 @@ Ny4yLDMuMiw2LDEuOCwiVmlyZ2luaWNhIgo2LjIsMi44LDQuOCwxLjgsIlZpcmdpbmljYSIKNi4xLDMs
 MywzLjQsNS42LDIuNCwiVmlyZ2luaWNhIgo2LjQsMy4xLDUuNSwxLjgsIlZpcmdpbmljYSIKNiwzLDQuOCwxLjgsIlZpcmdpbmljYSIKNi45LDMuMSw1LjQsMi4xLCJWaXJnaW5pY2EiCjYuNywzLjEsNS42LDIuNCwiVmlyZ2luaWNhIgo2LjksMy4xLDUuMSwyLjMsIlZpcmdpbmljYSIKNS44LDIuNyw1LjEsMS45LCJWaXJnaW5pY2EiCjYuOCwzLjIsNS45LDIuMywiVmlyZ2luaWNhIgo2LjcsMy4zLDUuNywyLjUsIlZpcmdpbmljYSIKNi43LDMsNS4yLDIuMywiVmlyZ2luaWNhIgo2LjMsMi41LDUsMS45LCJWaXJnaW5pY2EiCjYu
 NSwzLDUuMiwyLCJWaXJnaW5pY2EiCjYuMiwzLjQsNS40LDIuMywiVmlyZ2luaWNhIgo1LjksMyw1LjEsMS44LCJWaXJnaW5pY2Ei"
 decoded = rawToChar(base64enc::base64decode(b64data))
-print(decoded)
+
+library(ggplot2)
+mygraph <- ggplot(data, aes(sepal.length, petal.length))
+
 data = read.csv(text = decoded)
 fn = tempfile(fileext = '.png')
 png(fn)
 
-library(ggplot2)
-ggplot(data, aes(sepal.length, petal.length))
+print(mygraph)
 
 #boxplot(sepal.length~variety, data)
 dev.off()
 encoded = base64enc::base64encode(fn)
 encoded
 
-Sys.getenv("PATH")
-Sys.which("stats.dll")
