@@ -15,16 +15,5 @@ NSwzLDUuMiwyLCJWaXJnaW5pY2EiCjYuMiwzLjQsNS40LDIuMywiVmlyZ2luaWNhIgo1LjksMyw1LjEs
 decoded = rawToChar(base64enc::base64decode(b64data))
 print(decoded)
 data = read.csv(text = decoded)
-fn = tempfile(fileext = '.png')
-png(fn)
 
-library(ggplot2)
-ggplot(data, aes(sepal.length, petal.length))
-
-#boxplot(sepal.length~variety, data)
-dev.off()
-encoded = base64enc::base64encode(fn)
-encoded
-
-Sys.getenv("PATH")
-Sys.which("stats.dll")
+ggplot(data, aes(x = sepal.width, y = sepal.length)) + geom_point(color = "steelblue")
