@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace project_r2.Controllers
 {
@@ -15,6 +15,7 @@ namespace project_r2.Controllers
     {
         private readonly ILogger<RlangConnectorController> _logger;
         private REngine engine;
+        const int THREAD_STACK_SIZE = 2500000;
 
         public RlangConnectorController(ILogger<RlangConnectorController> logger)
         {
@@ -74,7 +75,9 @@ namespace project_r2.Controllers
                     break;
                 case "ggplot2":
                     libs = "library(ggplot2)";
-                    type = string.Format(@"ggplot(data, aes(x = {0}, y = {1})) + geom_point(color = ""steelblue"") + geom_smooth(method = ""lm"")", r.formula_x, r.formula_y);
+                    type = string.Format(@"p <- ggplot(data, aes(x = {0}, y = {1})) + geom_point(color = ""steelblue"") + geom_smooth(method = ""lm"")
+                    print(p)
+                    ", r.formula_x, r.formula_y);
                     break;
             }
 
@@ -90,8 +93,21 @@ namespace project_r2.Controllers
             ", libs, b64_lined, r.delimiter, type);
 
             //Console.WriteLine(cmd);
-            engine.Evaluate(cmd);
-            string[] result = engine.Evaluate("encoded").AsCharacter().ToArray();
+
+            string[] result = null;
+
+            var thread = new Thread(
+                () =>
+                {
+                    engine.Evaluate(cmd);
+                    result = engine.Evaluate("encoded").AsCharacter().ToArray();
+                    //engine.ForceGarbageCollection();
+                }, THREAD_STACK_SIZE);
+
+            thread.Start();
+            thread.Join();
+            //engine.Evaluate(cmd);
+            //string[] result = engine.Evaluate("encoded").AsCharacter().ToArray();
             
             StringBuilder builder = new StringBuilder();
             foreach (string v in result)

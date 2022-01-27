@@ -10,7 +10,12 @@ namespace project_r2
         public string command { get; set; }
         public string delimiter { get; set; }
         public string dataset { get; set; }
-        public string formula_x { get; set; }
-        public string formula_y { get; set; }
+        public RlangParams[] parameters { get; set; }
+    }
+
+    public class RlangParams
+    {
+        public string name { get; set; }
+        public string value { get; set; }
     }
 }
