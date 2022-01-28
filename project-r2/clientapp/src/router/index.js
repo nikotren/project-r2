@@ -28,6 +28,16 @@ const routes = [
         component: () => import(/* webpackChunkName: "compute" */ '../views/Compute.vue'),
     },
     {
+        path: '/cmd-editor',
+        name: 'Commands Editor',
+        component: () => import(/* webpackChunkName: "cmd-editor" */ '../views/CmdEditor.vue'),
+    },
+    {
+        path: '/cmd-manager',
+        name: 'Commands Manager',
+        component: () => import(/* webpackChunkName: "cmd-manager" */ '../views/CmdManager.vue'),
+    },
+    {
         path: '/about',
         name: 'About',
         component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),

@@ -33,6 +33,11 @@ export default {
                 path: '/',
             },
             {
+                icon: 'mdi-math-integral-box',
+                title: 'Compute',
+                path: '/compute',
+            },
+            {
                 icon: 'mdi-file-import',
                 title: 'Import Dataset',
                 path: '/import',
@@ -43,9 +48,14 @@ export default {
                 path: '/explorer',
             },
             {
-                icon: 'mdi-math-integral-box',
-                title: 'Compute',
-                path: '/compute',
+                icon: 'mdi-code-braces-box',
+                title: 'Commands Manager',
+                path: '/cmd-manager',
+            },
+            {
+                icon: 'mdi-file-edit',
+                title: 'Commands Editor',
+                path: '/cmd-editor',
             },
             {
                 icon: 'mdi-information',

@@ -3,13 +3,13 @@
         <v-card class="mx-auto my-2"
                 max-width="640"
                 outlined>
+            <v-card-title>Run Command</v-card-title>
             <v-card-text>
-                <div>Create a simple boxplot from imported Dataset (test).</div>
-                <div>Select a formula (2 columns which you want to visualize).</div>
                 <div class="row mt-6 mb-2">
                     <div class="col-12">
                         <v-select
                             v-model="actual_command"
+                            item-text="name"
                             :items="commands"
                             label="Command"
                             return-object
@@ -40,6 +40,7 @@
             </v-card-text>
             <v-card-actions>
                 <v-btn block elevation="2" @click="doCompute" :disabled="!(headers || actual_command.value == 'empty')">
+                    <v-icon left>mdi-calculator</v-icon>
                     Compute
                 </v-btn>
             </v-card-actions>
@@ -66,40 +67,7 @@ export default {
         headers: null,
         formula_x: null,
         formula_y: null,
-        commands: [
-            {
-                text:   'Boxplot',
-                value:  'boxplot',
-                params: [
-                    {
-                        text:   'X',
-                        json:   'x',
-                        type:   'number'
-                    },
-                ],
-            },
-            {
-                text:   'ggplot2',
-                value:  'ggplot2',
-                params: [
-                    {
-                        text:   'X',
-                        json:   'x',
-                        type:   'number'
-                    },
-                    {
-                        text:   'Y',
-                        json:   'y',
-                        type:   'number'
-                    },
-                    {
-                        text:   'Color',
-                        json:   'color',
-                        type:   'select_headers'
-                    }
-                ],
-            },
-        ],
+        commands: null,
         actual_command: {
             text:   'Please select function',
             value:  'empty',
@@ -111,6 +79,9 @@ export default {
         this.headers = JSON.parse(localStorage.getItem('loaded_data_headers'));
         /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
         console.warn(this.headers);
+
+        let saved = localStorage.getItem('loaded_cmds');
+        this.commands = (saved ? JSON.parse(saved) : []);
     },
     methods: {
         doCompute: function() {
