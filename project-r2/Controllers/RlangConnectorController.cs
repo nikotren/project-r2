@@ -34,31 +34,56 @@ namespace project_r2.Controllers
             engine = REngine.GetInstance("C:\\Program Files\\R\\R-3.6.3\\bin\\x64\\R.dll", true, rinit);
         }
 
-        [HttpGet]
-        [Route("api/rlang/{cmd}")]
-        public RlangConnector Get(String cmd)
+        [HttpPost]
+        [Route("api/v1/r/live")]
+        public RlangConnector Live(RlangRequest r)
         {
-            string[] result = engine.Evaluate(cmd).AsCharacter().ToArray();
+            string command_lined = SpliceText(r.command, 400);
 
-            StringBuilder builder = new StringBuilder();
-            foreach (string v in result)
+            string[] result = null;
+            int status = 200;
+            string message = "ok";
+            string finalr = "";
+
+            var thread = new Thread(
+                () =>
+                {
+                    try
+                    {
+                        result = engine.Evaluate(command_lined).AsCharacter().ToArray();
+                    }
+                    catch (RDotNet.EvaluationException e)
+                    {
+                        status = 400;
+                        message = e.Message;
+                    }
+                }, THREAD_STACK_SIZE);
+
+            thread.Start();
+            thread.Join();
+
+            if (message == "ok")
             {
-                builder.Append(v);
+                StringBuilder builder = new StringBuilder();
+                foreach (string v in result)
+                {
+                    builder.Append(v);
+                }
+
+                finalr = builder.ToString();
             }
 
-            string finalr = builder.ToString();
-
-            return new RlangConnector 
+            return new RlangConnector
             {
-                //Check status code later
-                StatusCode = 200,
+                StatusCode = status,
+                Message = message,
                 Result = finalr,
             };
         }
 
         [HttpPost]
-        [Route("api/rlang/test1")]
-        public RlangConnector Test1(RlangRequest r)
+        [Route("api/v1/r/dataset/text")]
+        public RlangConnector DatasetText(RlangRequest r)
         {
             //byte[] b64 = Convert.FromBase64String(r.Dataset);
             //string decoded = Encoding.UTF8.GetString(b64);
@@ -66,49 +91,29 @@ namespace project_r2.Controllers
              * https://stackoverflow.com/questions/49623768/an-unhandled-exception-of-type-system-stackoverflowexception-occurred-in-rdotn
              */
             string b64_lined = SpliceText(r.dataset, 400);
-            string type = "";
-            string libs = "";
-            switch(r.command)
-            {
-                case "boxplot":
-                    type = string.Format("boxplot({0}~{1}, data)", r.formula_x, r.formula_y);
-                    break;
-                case "ggplot2":
-                    libs = "library(ggplot2)";
-                    type = string.Format(@"p <- ggplot(data, aes(x = {0}, y = {1})) + geom_point(color = ""steelblue"") + geom_smooth(method = ""lm"")
-                    print(p)
-                    ", r.formula_x, r.formula_y);
-                    break;
-            }
+            string command_lined = SpliceText(r.command, 400);
 
-            string cmd = string.Format(@"{0}
-            b64data = ""{1}""
+            string cmd = string.Format(@"
+            b64data = ""{0}""
             decoded = rawToChar(base64enc::base64decode(b64data))
-            data = read.csv(text = decoded, sep = {2})
-            fn = tempfile(fileext = '.png')
-            png(fn)
-            {3}
-            dev.off()
-            encoded = base64enc::base64encode(fn)
-            ", libs, b64_lined, r.delimiter, type);
-
-            //Console.WriteLine(cmd);
+            data = read.csv(text = decoded, sep = {1})
+            
+            {2}
+            ", b64_lined, r.delimiter, command_lined);
 
             string[] result = null;
 
             var thread = new Thread(
                 () =>
                 {
-                    engine.Evaluate(cmd);
-                    result = engine.Evaluate("encoded").AsCharacter().ToArray();
-                    //engine.ForceGarbageCollection();
+                    result = engine.Evaluate(cmd).AsCharacter().ToArray();
                 }, THREAD_STACK_SIZE);
 
             thread.Start();
             thread.Join();
             //engine.Evaluate(cmd);
             //string[] result = engine.Evaluate("encoded").AsCharacter().ToArray();
-            
+
             StringBuilder builder = new StringBuilder();
             foreach (string v in result)
             {
@@ -119,7 +124,51 @@ namespace project_r2.Controllers
 
             return new RlangConnector
             {
-                //Check status code later
+                StatusCode = 200,
+                Result = finalr,
+            };
+        }
+
+        [HttpPost]
+        [Route("api/v1/r/dataset/image")]
+        public RlangConnector DatasetImage(RlangRequest r)
+        {
+            string b64_lined = SpliceText(r.dataset, 400);
+            string command_lined = SpliceText(r.command, 400);
+
+            string cmd = string.Format(@"
+            b64data = ""{0}""
+            decoded = rawToChar(base64enc::base64decode(b64data))
+            data = read.csv(text = decoded, sep = {1})
+            fn = tempfile(fileext = '.png')
+            png(fn)
+            {2}
+            dev.off()
+            encoded = base64enc::base64encode(fn)
+            ", b64_lined, r.delimiter, command_lined);
+
+            string[] result = null;
+
+            var thread = new Thread(
+                () =>
+                {
+                    engine.Evaluate(cmd);
+                    result = engine.Evaluate("encoded").AsCharacter().ToArray();
+                }, THREAD_STACK_SIZE);
+
+            thread.Start();
+            thread.Join();
+
+            StringBuilder builder = new StringBuilder();
+            foreach (string v in result)
+            {
+                builder.Append(v);
+            }
+
+            string finalr = builder.ToString();
+
+            return new RlangConnector
+            {
                 StatusCode = 200,
                 Result = finalr,
             };

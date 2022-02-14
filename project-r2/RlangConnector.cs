@@ -6,6 +6,8 @@ namespace project_r2
     {
         public int StatusCode { get; set; }
 
+        public string Message { get; set; }
+
         public string Result { get; set; }
     }
 }

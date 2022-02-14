@@ -44,6 +44,16 @@ export default {
       line-height: 1.5;
       padding: 5px;
   }
+
+  .console-editor {
+    background: #000;
+    color: #fff;
+  }
+
+  .prism-timestamp {
+    color: #808080 !important;
+  }
+
   .prism-editor__textarea:focus {
       outline: none;
       border: 0;

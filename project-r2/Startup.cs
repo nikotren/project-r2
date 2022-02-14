@@ -30,6 +30,17 @@ namespace project_r2
             {
                 configuration.RootPath = "ClientApp";
             });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:8080", "http://localhost:50598")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                    });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +53,7 @@ namespace project_r2
 
             app.UseRouting();
             app.UseSpaStaticFiles();
+            app.UseCors("AllowAll");
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
