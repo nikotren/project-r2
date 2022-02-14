@@ -77,7 +77,7 @@ export default {
         deleteAll: function() {
             localStorage.removeItem('loaded_cmds');
             this.items = [];
-            this.$root.$refs.Alert.show('All commands deleted successfully.');
+            this.$root.$refs.Alert.show('All commands removed successfully.');
         },
         importCommand: function() {
             this.$refs.cmdUpload.click();
@@ -101,6 +101,9 @@ export default {
             this.$root.$refs.Alert.show('Commands imported successfully.');
         },
         exportAll: function() {
+            if(this.items.length <= 0) {
+                return this.$root.$refs.Alert.show('There are no commands to export.', 'warning');
+            }
             let file_name = "project_r_" + String(+ new Date()) + ".json";
             let blob = new Blob([JSON.stringify(this.items, null, 2)], {
                 type: 'application/json',

@@ -34,6 +34,21 @@ export default {
 </script>
 
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+
+  .my-editor {
+      background: #fafafa;
+      color: #000;
+      font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
+      font-size: 16px;
+      line-height: 1.5;
+      padding: 5px;
+  }
+  .prism-editor__textarea:focus {
+      outline: none;
+      border: 0;
+  }
+
   .fade-enter-active, .fade-leave-active {
     width: inherit;
     transition: opacity .2s;

@@ -92,7 +92,7 @@
                 <v-icon left>mdi-application-import</v-icon>
                 Import Command to System
             </v-btn>
-            <v-btn elevation="2" color="grey lighten-1" @click="reset">
+            <v-btn elevation="2" color="red lighten-3" @click="reset">
                 <v-icon left>mdi-restart</v-icon>
                 Reset Form
             </v-btn>
@@ -110,6 +110,8 @@ import 'prismjs/themes/prism-coy.css';
 
 import { saveAs } from 'file-saver';
 import slugify from 'slugify';
+
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
     name: 'CmdEditor',
@@ -133,6 +135,7 @@ export default {
             },
         ],
         cmd: {
+            id: uuidv4(),
             name: "",
             description: "",
             params: [
@@ -154,10 +157,9 @@ export default {
         },
         addParam: function() {
             let cnt = this.cmd.params.length;
-            this.param_counter += 1;
 
             this.cmd.params.push({
-                id: this.param_counter,
+                id: uuidv4(),
                 name: "Argument " + (cnt),
                 var_name: "argument_" + (cnt),
                 type: "number",
@@ -189,6 +191,7 @@ export default {
         reset: function() {
             this.param_counter = 0,
             this.cmd = {
+                id: uuidv4(),
                 name: "",
                 description: "",
                 params: [
@@ -209,21 +212,4 @@ export default {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
-
-.my-editor {
-    background: #fafafa;
-    color: #000;
-    font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace;
-    font-size: 16px;
-    line-height: 1.5;
-    padding: 5px;
-}
-</style>
-
-<style>
-.prism-editor__textarea:focus {
-    outline: none;
-    border: 0;
-}
 </style>

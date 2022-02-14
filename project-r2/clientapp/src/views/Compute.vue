@@ -69,7 +69,7 @@ export default {
         formula_y: null,
         commands: null,
         actual_command: {
-            text:   'Please select function',
+            text:   'Please select command',
             value:  'empty',
             params: []
         },
@@ -113,7 +113,7 @@ export default {
                 this.status = response.data.statusCode;
             }).catch(error => {
                 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-                this.$root.$refs.Alert.show('[API] Error: ' +  error, 'error');
+                this.$root.$refs.Alert.show('[API] Error: ' +  error.message, 'error');
             });
         },
     }
