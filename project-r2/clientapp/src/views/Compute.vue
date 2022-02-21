@@ -10,7 +10,7 @@
                         <v-select
                             v-model="actual_command"
                             item-text="name"
-                            :items="commands"
+                            :items="cmdStore.commands"
                             label="Command"
                             return-object
                             ></v-select>
@@ -33,13 +33,13 @@
                                 v-else-if="param.type == 'select_headers'"
                                 v-model="actual_values[param.json]"
                                 :label="param.text"
-                                :items="headers"></v-select>
+                                :items="dataStore.headers"></v-select>
                         </div>
                     </div>
                 </div>
             </v-card-text>
             <v-card-actions>
-                <v-btn block elevation="2" @click="doCompute" :disabled="!(headers || actual_command.value == 'empty')">
+                <v-btn block elevation="2" @click="doCompute" :disabled="!(dataStore.headers || actual_command.value == 'empty')">
                     <v-icon left>mdi-calculator</v-icon>
                     Compute
                 </v-btn>
@@ -57,17 +57,16 @@
 </template>
 
 <script>
-const BASE_URL = 'http://localhost:50598/api';
+import { commandsStore } from '@/store/commands';
+import { datasetStore } from '@/store/dataset';
 
 export default {
     name: 'Compute',
     data: () => ({
         result: null,
         status: null,
-        headers: null,
         formula_x: null,
         formula_y: null,
-        commands: null,
         actual_command: {
             text:   'Please select command',
             value:  'empty',
@@ -75,19 +74,16 @@ export default {
         },
         actual_values: {},
     }),
+    setup() {
+        const cmdStore = commandsStore();
+        const dataStore = datasetStore();
+        return { cmdStore, dataStore }
+    },
     mounted: function() {
-        this.headers = JSON.parse(localStorage.getItem('loaded_data_headers'));
-        /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-        console.warn(this.headers);
-
-        let saved = localStorage.getItem('loaded_cmds');
-        this.commands = (saved ? JSON.parse(saved) : []);
     },
     methods: {
         doCompute: function() {
-            let url = BASE_URL + '/rlang/test1';
-            let saved_data = localStorage.getItem('loaded_data');
-            let saved_delimiter = localStorage.getItem('loaded_data_delimiter');
+            let url = '/rlang/test1';
             let parameters = [];
 
             for (const [k, v] of Object.entries(this.actual_values)) {
@@ -98,10 +94,10 @@ export default {
             }
 
             let data = {
-                delimiter:  saved_delimiter,
+                delimiter:  this.dataStore.delimiter,
                 command:    this.actual_command,
                 params:     parameters,
-                dataset:    saved_data,
+                dataset:    this.dataStore.dataset,
             };
             /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
             console.warn(data);

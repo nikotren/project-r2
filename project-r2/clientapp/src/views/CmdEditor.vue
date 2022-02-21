@@ -113,6 +113,8 @@ import slugify from 'slugify';
 
 import { v4 as uuidv4 } from 'uuid';
 
+import { commandsStore } from '@/store/commands';
+
 export default {
     name: 'CmdEditor',
     components: {
@@ -151,6 +153,10 @@ export default {
             code: "",
         }
     }),
+    setup() { 
+        const store = commandsStore();
+        return { store }
+    },
     methods: {
         highlighter(code) {
             return highlight(code, languages.r)
@@ -179,13 +185,7 @@ export default {
             saveAs(blob, file_name);
         },
         importCommand: function() {
-            //rework to vuex later..
-            let saved = localStorage.getItem('loaded_cmds');
-            let obj = (saved ? JSON.parse(saved) : []);
-            obj.push(this.cmd);
-            let saved_new = JSON.stringify(obj);
-
-            localStorage.setItem('loaded_cmds', saved_new);
+            this.store.commands.push(this.cmd);
             this.$root.$refs.Alert.show('Command imported successfully.');
         },
         reset: function() {

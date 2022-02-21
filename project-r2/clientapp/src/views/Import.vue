@@ -32,12 +32,12 @@
             <div class="my-2">
                 <v-checkbox
                     v-model="papa_headers"
-                    label="Skip headers (first row)"
+                    label="Header names in first row"
                     hide-details
                 ></v-checkbox>
                 <v-checkbox
-                    v-model="papa_quotes"
-                    label="Force fields quotes"
+                    v-model="papa_skip_empty"
+                    label="Skip empty lines"
                     hide-details
                 ></v-checkbox>
             </div>
@@ -53,17 +53,19 @@
 <script>
 import Papa from 'papaparse';
 
+import { datasetStore } from '@/store/dataset';
+
 export default {
     name: 'Import',
     data: () => ({
         file: null,
         data: null,
-        delim: 'auto',
+        delim: '',
         delim_custom: null,
         delimiters: [
             {
                 text:   'Autodetect',
-                value:  'auto',
+                value:  '',
             },
             {
                 text:   'Semicolon ;',
@@ -94,9 +96,13 @@ export default {
                 value:  'custom',
             }
         ],
-        papa_headers: false,
-        papa_quotes: false,
+        papa_headers: true,
+        papa_skip_empty: true,
     }),
+    setup() {
+        const store = datasetStore();
+        return { store }
+    },
     methods: {
         loadData: function() {
             const accepted = ['csv', 'txt', 'json'];
@@ -116,34 +122,32 @@ export default {
                 reader.onload = (res) => {
                     let result = String(res.target.result);
                     //data:*/*;base64, removal
-                    //!!! Use Vuex later !!!
                     let cleaned = result.substring(result.indexOf(",") + 1);
 
                     let papaConfig = {
                         header: this.papa_headers,
-                        quotes: this.papa_quotes,
-                        dymamicTyping: true,
-                        delimiter: "",
+                        dynamicTyping: true,
+                        delimiter: (this.delim_custom !== null ? this.delim_custom : this.delim),
+                        skipEmptyLines: this.papa_skip_empty,
                     };
 
-                    if(this.delim !== 'auto') {
+                    /*if(this.delim !== 'auto') {
                         let d = this.delim;
                         if(this.delim_custom !== null) {
                             d = this.delim_custom;
                         }
                         papaConfig['delimiter'] = d;
-                    }
+                    }*/
 
                     let decoded = atob(cleaned);
                     //let jsoned = ConvertCsvToJson.fieldDelimiter(d).formatValueByType().csvStringToJson(decoded);
                     let papi = Papa.parse(decoded, papaConfig);
                     let jsoned = papi['data'];
                     let headers = Object.keys(jsoned[0]);
-                    //console.log(jsoned);
-                    localStorage.setItem('loaded_data_json', JSON.stringify(jsoned));
-                    localStorage.setItem('loaded_data_headers', JSON.stringify(headers));
-                    localStorage.setItem('loaded_data_delimiter', papi['meta']['delimiter']);
-                    localStorage.setItem('loaded_data', cleaned);
+                    console.log(jsoned);
+                    this.store.dataset = jsoned;
+                    this.store.headers = headers;
+                    this.store.delimiter = papi['meta']['delimiter'];
                 };
                 
                 reader.readAsDataURL(this.file, 'UTF-8');

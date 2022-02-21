@@ -12,9 +12,9 @@
             ></v-text-field>
         </v-card-title>
         <v-data-table
-            v-if="items !== null && headers !== null"
+            v-if="store.commands !== null && headers !== null"
             :headers="headers"
-            :items="items"
+            :items="store.commands"
             :items-per-page="50"
             :search="search"
             :footer-props="footer_props"
@@ -23,6 +23,12 @@
             dense
             multi-sort
         >
+            <template v-slot:item.actions="{ item }">
+                <v-icon
+                    @click="deleteItem(item)">
+                    mdi-delete
+                </v-icon>
+            </template>
             <template v-slot:footer.page-text>
                 <v-btn color="brown" class="white--text mr-2" dark elevation="2" @click="importCommand">
                     <v-icon left>mdi-file-import-outline</v-icon>
@@ -44,24 +50,12 @@
 
 <script>
 import { saveAs } from 'file-saver';
+import { commandsStore } from '@/store/commands';
 
 export default {
     name: 'CmdManager',
     data: () => ({
-        items: null,
-        headers: null,
-        search: null,
-        loading: false,
-        footer_props: {
-            'items-per-page-options': [15, 30, 50, 100, 200, -1], 
-            'showFirstLastPage': true
-        },
-    }),
-    mounted: function () {
-        this.loading = true;
-        let saved = localStorage.getItem('loaded_cmds');
-        this.items = (saved ? JSON.parse(saved) : []);
-        this.headers = [
+        headers: [
             {
                 text:   "Command Name",
                 value:  "name",
@@ -70,14 +64,34 @@ export default {
                 text:   "Description",
                 value:  "description",
             },
-        ];
-        this.loading = false;
+            {
+                text:   "Actions",
+                value:  "actions",
+                sortable:   false,
+            },
+        ],
+        search: null,
+        loading: false,
+        footer_props: {
+            'items-per-page-options': [15, 30, 50, 100, 200, -1], 
+            'showFirstLastPage': true
+        },
+    }),
+    setup() {
+        const store = commandsStore();
+        return { store }
+    },
+    mounted: function () {
     },
     methods: {
         deleteAll: function() {
-            localStorage.removeItem('loaded_cmds');
-            this.items = [];
+            this.store.commands = [];
             this.$root.$refs.Alert.show('All commands removed successfully.');
+        },
+        deleteItem: function(item) {
+            let editedIndex = this.store.commands.indexOf(item);
+            this.store.commands.splice(editedIndex, 1);
+            this.$root.$refs.Alert.show('Command successfully deleted.', 'info');
         },
         importCommand: function() {
             this.$refs.cmdUpload.click();
@@ -92,20 +106,18 @@ export default {
                 let result = String(res.target.result);
 
                 let new_items = JSON.parse(result);
-                this.items = this.items.concat(new_items);
-
-                localStorage.setItem('loaded_cmds', JSON.stringify(this.items));
+                this.store.commands = this.store.commands.concat(new_items);
             };
             
             reader.readAsText(this.$refs.cmdUpload.files[0], 'UTF-8');
             this.$root.$refs.Alert.show('Commands imported successfully.');
         },
         exportAll: function() {
-            if(this.items.length <= 0) {
+            if(this.commands.length <= 0) {
                 return this.$root.$refs.Alert.show('There are no commands to export.', 'warning');
             }
             let file_name = "project_r_" + String(+ new Date()) + ".json";
-            let blob = new Blob([JSON.stringify(this.items, null, 2)], {
+            let blob = new Blob([JSON.stringify(this.store.commands, null, 2)], {
                 type: 'application/json',
                 name: file_name
             });
