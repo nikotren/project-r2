@@ -9,6 +9,13 @@
                 <div class="my-2">
                     <prism-editor class="my-editor elevation-2" v-model="cmd" :highlight="highlighter" line-numbers></prism-editor>
                 </div>
+                <div class="mt-2">
+                    <v-checkbox
+                        v-model="img_out"
+                        label="Output is image"
+                        hide-details
+                    ></v-checkbox>
+                </div>
             </v-card-text>
             <v-card-actions class="justify-center">
                 <v-btn elevation="2" @click="requestApi" :disabled="(cmd.length <= 0)">
@@ -25,10 +32,19 @@
         <v-card class="mx-auto"
                 max-width="1024"
                 outlined
-                v-if="results.length !== 0">
+                v-if="results.length !== 0 || img_res">
             <v-card-title>Console Output</v-card-title>
             <v-card-text>
-                <div class="my-2">
+                <div v-if="img_res">
+                    <img v-bind:src="'data:image/png;base64,'+ img_res" class="result-image">
+                    <v-card-actions>
+                        <v-btn block color="green lighten-2" elevation="2" @click="saveImage">
+                            <v-icon left>mdi-file-image</v-icon>
+                            Save Image
+                        </v-btn>
+                    </v-card-actions>
+                </div>
+                <div v-if="results.length !== 0" class="my-2">
                     <prism-editor class="my-editor console-editor elevation-2" v-model="results_formatted" :highlight="highlighter2" readonly></prism-editor>
                 </div>
             </v-card-text>
@@ -50,6 +66,8 @@ import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-r';
 import 'prismjs/themes/prism-coy.css';
 
+import urlSlug from 'url-slug';
+
 export default {
     name: 'Home',
     components: {
@@ -58,6 +76,8 @@ export default {
     data: () => ({
         cmd: "",
         results: [],
+        img_out: false,
+        img_res: null,
         status: null,
     }),
     methods: {
@@ -69,23 +89,32 @@ export default {
         },
         requestApi: function () {
             let data = {
-                command: this.cmd
+                image_output:   this.img_out,
+                command:        this.cmd,
             };
 
-            this.$http.post('/r/live', data).then(response => {
-                /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-                console.error(response);
+            this.$http.post('/r/compute', data).then(response => {
                 if(response.data.statusCode == 200) {
-                    this.results.push(response.data.result);
+                    if(this.img_out) {
+                        this.img_res = response.data.result;
+                    }else{
+                        this.results.push(response.data.result);
+                    }
                 }else{
                     this.$root.$refs.Alert.show('Error from R engine: ' + response.data.message + '.', 'error');
                 }
             }).catch(error => {
-                /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-                console.error('error', error)
+                this.$root.$refs.Alert.show('[API] Error: ' +  error.message, 'error');
             });
         },
+        saveImage: function() {
+            var a  = document.createElement('a');
+            a.href = 'data:image/png;base64,' + this.result;
+            a.download = urlSlug(this.actual_command.name) + '_' + String(+ new Date()) + '.png';
+            a.click();
+        },
         clearResults() {
+            this.img_res = null,
             this.results = [];
         },
         clearCmd() {

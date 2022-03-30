@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace project_r2
+namespace project_r2.Models
 {
     public class RlangConnector
     {

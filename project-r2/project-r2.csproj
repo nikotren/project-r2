@@ -6,11 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\WeatherForecastController.cs" />
-    <Compile Remove="WeatherForecast.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="R.NET" Version="1.9.0" />
     <PackageReference Include="VueCliMiddleware" Version="5.0.0" />
   </ItemGroup>

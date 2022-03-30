@@ -20,45 +20,45 @@
                     v-for="(item, i) in cmd.params"
                     :key="item.id"
                 >
-                <v-expansion-panel-header>
-                    {{ item.name }} ({{ item.var_name }})
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                    <v-text-field 
-                        v-model="item.name"
-                        label="Argument Name"
-                        dense
-                        outlined
-                        clearable></v-text-field>
-                    <v-text-field 
-                        v-model="item.var_name"
-                        label="Argument Variable Name"
-                        dense
-                        outlined
-                        clearable></v-text-field>
-                    <v-text-field 
-                        v-model="item.description"
-                        label="Argument Description"
-                        dense
-                        outlined
-                        clearable></v-text-field>
-                    <v-select 
-                            v-model="item.type"
-                            label="Argument Type"
-                            :items="param_types"></v-select>
-                    <v-text-field 
-                        v-model="item.default_value"
-                        label="Argument Default Value"
-                        dense
-                        outlined
-                        clearable></v-text-field>
-                    <div class="d-flex justify-center">
-                        <v-btn color="red" dark elevation="2" @click="removeParam(i)">
-                            <v-icon left>mdi-delete</v-icon>
-                            Remove Argument
-                        </v-btn>
-                    </div>
-                </v-expansion-panel-content>
+                    <v-expansion-panel-header>
+                        {{ item.name }} ({{ item.var_name }})
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                        <v-text-field 
+                            v-model="item.name"
+                            label="Argument Name"
+                            dense
+                            outlined
+                            clearable></v-text-field>
+                        <v-text-field 
+                            v-model="item.var_name"
+                            label="Argument Variable Name"
+                            dense
+                            outlined
+                            clearable></v-text-field>
+                        <v-text-field 
+                            v-model="item.description"
+                            label="Argument Description"
+                            dense
+                            outlined
+                            clearable></v-text-field>
+                        <v-select 
+                                v-model="item.type"
+                                label="Argument Type"
+                                :items="param_types"></v-select>
+                        <v-text-field 
+                            v-model="item.default_value"
+                            label="Argument Default Value"
+                            dense
+                            outlined
+                            clearable></v-text-field>
+                        <div class="d-flex justify-center">
+                            <v-btn color="red" dark elevation="2" @click="removeParam(i)">
+                                <v-icon left>mdi-delete</v-icon>
+                                Remove Argument
+                            </v-btn>
+                        </div>
+                    </v-expansion-panel-content>
                 </v-expansion-panel>
             </v-expansion-panels>
             <div class="d-flex justify-center mt-4">
@@ -77,11 +77,18 @@
         </v-card-text>
         <v-card-title class="mt-0 pt-0">R Script</v-card-title>
         <v-card-text>
-            <!--<div class="mb-2">
-                <p class="py-0 my-0">Use <span style="font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace; font-weight: 700;">data</span> variable as currently parsed dataset.</p>
-                <p class="py-0 my-0">Use <span style="font-family: Fira code, Fira Mono, Consolas, Menlo, Courier, monospace; font-weight: 700;">result</span> variable as computed result which should be returned.</p>    
-            </div>-->
+            <div>
+                <p class="my-0 py-0">Refer to loaded dataset data as <span class="font-weight-bold font-italic">data</span> variable.</p>
+                <p class="my-0 pb-4">Refer to data's column as <span class="font-weight-bold font-italic">.data[[column_name]]</span> or <span class="font-weight-bold font-italic">get(column_name)</span>, where <span class="font-weight-bold font-italic">column_name</span> can be command argument's name of variable defined above.</p>
+            </div>
             <prism-editor class="my-editor elevation-2" v-model="cmd.code" :highlight="highlighter" line-numbers></prism-editor>
+        </v-card-text>
+        <v-card-text>
+            <v-checkbox
+                v-model="cmd.img_output"
+                label="Output should be image"
+                hide-details
+            ></v-checkbox>
         </v-card-text>
         <v-card-actions class="text-center justify-center">
             <v-btn elevation="2" @click="saveToJson">
@@ -140,16 +147,8 @@ export default {
             id: uuidv4(),
             name: "",
             description: "",
-            params: [
-                {
-                    id: 0,
-                    name: "Argument 0",
-                    var_name: "argument_0",
-                    type: "number",
-                    description: "",
-                    default_value: "",
-                },
-            ],
+            img_output: false,
+            params: [],
             code: "",
         }
     }),
@@ -172,6 +171,8 @@ export default {
                 description: "",
                 default_value: "",
             });
+
+
         },
         removeParam: function(i) {
             this.cmd.params.splice(i, 1);
@@ -187,6 +188,8 @@ export default {
         importCommand: function() {
             this.store.commands.push(this.cmd);
             this.$root.$refs.Alert.show('Command imported successfully.');
+
+            this.cmd.id = uuidv4();
         },
         reset: function() {
             this.param_counter = 0,
@@ -212,4 +215,7 @@ export default {
 </script>
 
 <style scoped>
+.code {
+    font-family: "Lucida Console", "Courier New", monospace;
+}
 </style>

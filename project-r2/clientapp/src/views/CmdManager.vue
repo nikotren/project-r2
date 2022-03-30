@@ -113,7 +113,7 @@ export default {
             this.$root.$refs.Alert.show('Commands imported successfully.');
         },
         exportAll: function() {
-            if(this.commands.length <= 0) {
+            if(this.store.commands.length <= 0) {
                 return this.$root.$refs.Alert.show('There are no commands to export.', 'warning');
             }
             let file_name = "project_r_" + String(+ new Date()) + ".json";

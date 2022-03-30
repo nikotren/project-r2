@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace project_r2
+namespace project_r2.Models
 {
     public class RlangRequest
     {
         public string command { get; set; }
-        public string delimiter { get; set; }
         public string dataset { get; set; }
+        public bool image_output { get; set; }
+
+        [JsonPropertyName("params")]
         public RlangParams[] parameters { get; set; }
     }
 
@@ -17,5 +16,6 @@ namespace project_r2
     {
         public string name { get; set; }
         public string value { get; set; }
+        public string type { get; set; }
     }
 }

@@ -5,7 +5,7 @@ export const datasetStore = defineStore({
   state: () =>({
     dataset: [],
     headers: [],
-    delimiter: '',
+    raw_csv: '',
   }),
   persist: true,
   getters: {},

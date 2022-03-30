@@ -131,23 +131,14 @@ export default {
                         skipEmptyLines: this.papa_skip_empty,
                     };
 
-                    /*if(this.delim !== 'auto') {
-                        let d = this.delim;
-                        if(this.delim_custom !== null) {
-                            d = this.delim_custom;
-                        }
-                        papaConfig['delimiter'] = d;
-                    }*/
-
                     let decoded = atob(cleaned);
-                    //let jsoned = ConvertCsvToJson.fieldDelimiter(d).formatValueByType().csvStringToJson(decoded);
                     let papi = Papa.parse(decoded, papaConfig);
                     let jsoned = papi['data'];
                     let headers = Object.keys(jsoned[0]);
-                    console.log(jsoned);
+                    let raw = Papa.unparse(jsoned);
                     this.store.dataset = jsoned;
                     this.store.headers = headers;
-                    this.store.delimiter = papi['meta']['delimiter'];
+                    this.store.raw_csv = raw;
                 };
                 
                 reader.readAsDataURL(this.file, 'UTF-8');

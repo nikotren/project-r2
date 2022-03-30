@@ -1,14 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using VueCliMiddleware;
 
 namespace project_r2
@@ -61,7 +55,7 @@ namespace project_r2
                 endpoints.MapControllers();
             });
 
-            app.UseSpa(spa =>
+            /*app.UseSpa(spa =>
             {
                 if (env.IsDevelopment())
                     spa.Options.SourcePath = "ClientApp";
@@ -73,7 +67,7 @@ namespace project_r2
                     spa.UseVueCli(npmScript: "serve");
                 }
 
-            });
+            });*/
         }
     }
 }
