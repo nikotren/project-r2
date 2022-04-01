@@ -97,6 +97,15 @@ export default {
             this.$refs.cmdUpload.click();
         },
         actualImport: function() {
+            const cmdKeys = [
+                'id', 'name', 'description',
+                'img_output', 'params', 'code'
+            ];
+            const paramKeys = [
+                'id', 'name', 'var_name',
+                'type', 'description', 'default_value'
+            ];
+
             const reader = new FileReader();
             reader.onerror = (err) => {
                 this.$root.$refs.Alert.show('Error while importing: ' + err, 'error');
@@ -104,13 +113,53 @@ export default {
 
             reader.onload = (res) => {
                 let result = String(res.target.result);
+                let newCmds = [];
+                let duplicates = 0;
 
-                let new_items = JSON.parse(result);
-                this.store.commands = this.store.commands.concat(new_items);
+                try {
+                    let newItems = JSON.parse(result);
+                    let ok = true;
+
+                    checkLoop:
+                    for (let e of newItems) {
+                        //Check for missing parameters (maybe wrongly written/edited Command JSON)
+                        if(!cmdKeys.every(item => e.hasOwnProperty(item))) {
+                            this.$root.$refs.Alert.show('Error while importing: Wrong JSON format.', 'error');
+                            ok = false;
+                            break checkLoop;
+                        }
+                        for (let f of e.params) {
+                            if(!paramKeys.every(item => f.hasOwnProperty(item))) {
+                                this.$root.$refs.Alert.show('Error while importing: Wrong JSON format.', 'error');
+                                ok = false;
+                                break checkLoop;
+                            }
+                        }
+                        //Check if the same command is not already in current store
+                        if(!this.store.commands.some(c => c.id === e.id)) {
+                            newCmds.push(e);
+                        }else{
+                            duplicates += 1;
+                        }
+                    }
+
+                    if(ok) {
+                        this.store.commands = this.store.commands.concat(newCmds);
+                        let c = newCmds.length;
+                        if(c > 0 && duplicates > 0) {
+                            this.$root.$refs.Alert.show(`${newCmds.length} commands imported successfully, skipped ${duplicates} duplicates.`);
+                        }else if(c > 0) {
+                            this.$root.$refs.Alert.show(`${newCmds.length} commands imported successfully.`);
+                        }else{
+                            this.$root.$refs.Alert.show(`No new commands, ${duplicates} duplicated commands not imported.`);
+                        }
+                    }
+                } catch (e) {
+                    this.$root.$refs.Alert.show('Error while importing: Cannot parse JSON: ' + e, 'error');
+                }
             };
             
             reader.readAsText(this.$refs.cmdUpload.files[0], 'UTF-8');
-            this.$root.$refs.Alert.show('Commands imported successfully.');
         },
         exportAll: function() {
             if(this.store.commands.length <= 0) {

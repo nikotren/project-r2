@@ -20,6 +20,7 @@
                     <li>Slugify 1.6.5 (<a href="https://github.com/simov/slugify" target="_blank">https://github.com/simov/slugify</a>)</li>
                     <li>Pinia 2.0.12 (<a href="https://github.com/vuejs/pinia" target="_blank">https://github.com/vuejs/pinia</a>)</li>
                     <li>Pinia Plugin PersistedState 1.5.2 (<a href="https://github.com/prazdevs/pinia-plugin-persistedstate" target="_blank">https://github.com/prazdevs/pinia-plugin-persistedstate</a>)</li>
+                    <li>jsPDF 2.5.1 (<a href="https://github.com/parallax/jsPDF" target="_blank">https://github.com/parallax/jsPDF</a>)</li>
                 </ul>
                 <h5>Back-end</h5>
                 <ul>

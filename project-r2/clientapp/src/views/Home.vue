@@ -36,12 +36,31 @@
             <v-card-title>Console Output</v-card-title>
             <v-card-text>
                 <div v-if="img_res">
-                    <img v-bind:src="'data:image/png;base64,'+ img_res" class="result-image">
-                    <v-card-actions>
-                        <v-btn block color="green lighten-2" elevation="2" @click="saveImage">
-                            <v-icon left>mdi-file-image</v-icon>
-                            Save Image
+                    <img v-bind:src="'data:image/svg+xml;base64,'+ img_res" class="result-image">
+                    <v-card-actions class="justify-center">
+                        <v-btn color="green lighten-3" class="black--text" elevation="2" @click="saveImagePng">
+                            <v-icon class="pr-2">mdi-file-image</v-icon>
+                            Save as PNG
                         </v-btn>
+                        <v-btn color="green lighten-3" class="black--text" elevation="2" @click="saveImageSvg">
+                            <v-icon class="pr-2">mdi-file-image</v-icon>
+                            Save as SVG
+                        </v-btn>
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn 
+                                color="green lighten-3" 
+                                class="black--text ml-2" 
+                                elevation="2"
+                                v-bind="attrs"
+                                v-on="on"
+                                @click="saveImagePdf">
+                                    <v-icon class="pr-2">mdi-file-pdf-box</v-icon>
+                                    Save as PDF
+                                </v-btn>
+                            </template>
+                            <span>Attention! Image in PDF will be rasterized.</span>
+                        </v-tooltip>
                     </v-card-actions>
                 </div>
                 <div v-if="results.length !== 0" class="my-2">
@@ -66,13 +85,16 @@ import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-r';
 import 'prismjs/themes/prism-coy.css';
 
-import urlSlug from 'url-slug';
+import ImageHelper from '@/mixins/ImageHelper';
 
 export default {
     name: 'Home',
     components: {
         PrismEditor,
     },
+    mixins: [
+        ImageHelper,
+    ],
     data: () => ({
         cmd: "",
         results: [],
@@ -106,12 +128,6 @@ export default {
             }).catch(error => {
                 this.$root.$refs.Alert.show('[API] Error: ' +  error.message, 'error');
             });
-        },
-        saveImage: function() {
-            var a  = document.createElement('a');
-            a.href = 'data:image/png;base64,' + this.result;
-            a.download = urlSlug(this.actual_command.name) + '_' + String(+ new Date()) + '.png';
-            a.click();
         },
         clearResults() {
             this.img_res = null,

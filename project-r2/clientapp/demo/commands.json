@@ -1,0 +1,251 @@
+[
+  {
+    "id": "93c61f08-f047-4bfb-8776-65725de06c36",
+    "name": "Density & Frequency",
+    "description": "Density & Frequency analysis with the Histogram.",
+    "img_output": true,
+    "params": [
+      {
+        "id": "5f2418bc-cec7-42ae-8a0f-c74a05194932",
+        "name": "X",
+        "var_name": "arg0",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "sepal.length"
+      },
+      {
+        "id": "5f2418bc-cec7-42ae-8a0f-c74a05194933",
+        "name": "Y",
+        "var_name": "arg1",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "variety"
+      }
+    ],
+    "code": "require('ggplot2')\nlibrary('ggplot2')\nhist <- ggplot(data=data, aes(x=get(arg0)))+\n  geom_histogram(binwidth=0.2, color=\"black\", aes(fill=get(arg1))) + \n  xlab(arg0) +  \n  ylab(\"Frequency\") +\n guides(fill=guide_legend(title=arg1)) +\n ggtitle(paste(\"Histogram of \", arg0))+\n  geom_vline(data=data, aes(xintercept = mean(get(arg0))),linetype=\"dashed\",color=\"grey\")\n print(hist)"
+  },
+  {
+    "id": "fc2f90b2-fb4b-4af0-8dd5-49eec396881b",
+    "name": "Density Plot",
+    "description": "Like the scatterplot matrix, the density plot by class can help see the separation of classes. ",
+    "img_output": true,
+    "params": [
+      {
+        "id": "538d59eb-070b-4853-a649-9b91b7f6145f",
+        "name": "X",
+        "var_name": "arg0",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "sepal.length"
+      },
+      {
+        "id": "1325250d-301b-46dd-a8fe-34ef478137c2",
+        "name": "Y",
+        "var_name": "arg1",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "variety"
+      }
+    ],
+    "code": "require('ggplot2')\n library('ggplot2')\n pl = ggplot(data=data, aes(x=get(arg0), colour=get(arg1), fill=get(arg1))) +\ngeom_density(alpha=.3) +\ngeom_vline(aes(xintercept=mean(get(arg0)),  colour=get(arg1)),linetype=\"dashed\",color=\"grey\", size=1)+\nxlab(arg0) +  \nylab(\"Density\")\n  \nprint(pl)"
+  },
+  {
+    "id": "67f6d6c9-1733-4fee-b7cd-5c97ccc27fed",
+    "name": "Boxplot",
+    "description": "With boxplot we can identify outliers.",
+    "img_output": true,
+    "params": [
+      {
+        "id": "00d4ded4-a01c-4b57-b472-77355860736e",
+        "name": "X",
+        "var_name": "arg0",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "sepal.length"
+      },
+      {
+        "id": "2880975b-07f4-4ad7-bd90-f1aaec7297d4",
+        "name": "Y",
+        "var_name": "arg1",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "variety"
+      }
+    ],
+    "code": "require('ggplot2')\nlibrary('ggplot2')\n\nplt = ggplot(data=data, aes(get(arg1), get(arg0), fill=get(arg1))) + \nguides(fill=guide_legend(title=arg1)) +\ngeom_boxplot()+\nscale_y_continuous(arg0, breaks= seq(0,30, by=.5))+\nlabs(title = paste(arg0, \"Box Plot\"), x = arg1)\n\nprint(plt)"
+  },
+  {
+    "id": "67634e91-f402-47e6-bce4-992fe87e1b25",
+    "name": "Violin Plot",
+    "description": "They are similar to the Box Plots but they show the number of points at a particular value by the width of the shapes.",
+    "img_output": true,
+    "params": [
+      {
+        "id": "887b9381-4be8-453f-8827-7bad09dc3bba",
+        "name": "X",
+        "var_name": "arg0",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "sepal.length"
+      },
+      {
+        "id": "4836fccf-2e53-4b65-a572-9bb2d9b788da",
+        "name": "Y",
+        "var_name": "arg1",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "variety"
+      }
+    ],
+    "code": "require('ggplot2')\nlibrary('ggplot2')\n\nplt = ggplot(data=data, aes(get(arg1), get(arg0))) + \ngeom_violin(aes(color = get(arg1)), trim = T)+\n xlab(arg0) +\n labs(colour = arg1) +\n scale_y_continuous(arg0, breaks= seq(0,30, by=.5))+\ngeom_boxplot(width=0.1)\n\nprint(plt)"
+  },
+  {
+    "id": "30bcb423-7e33-4fa2-9c24-90a74756b660",
+    "name": "Scatterplot",
+    "description": "Scatterplot of X versus Y with the color & shape by Z. There is also a regression line with a 95% confidence band.",
+    "img_output": true,
+    "params": [
+      {
+        "id": "db86278d-c5db-4c73-b37c-68486a49e042",
+        "name": "X",
+        "var_name": "arg0",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "sepal.length"
+      },
+      {
+        "id": "0dcca685-ac09-4394-98c8-70b57d213248",
+        "name": "Y",
+        "var_name": "arg1",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "sepal.width"
+      },
+      {
+        "id": "0dcca685-ac09-4394-98c8-70b57d213249",
+        "name": "Z",
+        "var_name": "arg2",
+        "type": "select_headers",
+        "description": "",
+        "default_value": "variety"
+      }
+    ],
+    "code": "require('car')\nlibrary('car')\n\nscatterplot(get(arg0) ~ get(arg1) | get(arg2), data=data, xlab=arg0, ylab=arg1, legend = list(title=arg2, inset=0.02, cex=1))\n\n"
+  },
+  {
+    "id": "ac18fb6f-6925-437a-8241-e7afe519d0e9",
+    "name": "Correlation Plot",
+    "description": "Pairwise correlation numerical values to ascertain the relationships in more detail.",
+    "img_output": true,
+    "params": [
+      {
+        "id": "aa51ca34-0e7b-41d7-a8b8-25f10b517659",
+        "name": "From",
+        "var_name": "arg0",
+        "type": "number",
+        "description": "Start index of dataset's column",
+        "default_value": "1"
+      },
+      {
+        "id": "99db902f-b4be-4bd5-9c3b-52ccfba9b650",
+        "name": "To",
+        "var_name": "arg1",
+        "type": "number",
+        "description": "End index of dataset's column",
+        "default_value": "4"
+      }
+    ],
+    "code": "if (!require('GGally')) install.packages('GGally', repos = \"http://cran.us.r-project.org\"); library('GGally')\n\nplt = ggpairs(data = data[arg0:arg1],\n        title = \"Correlation Plot\",\n        upper = list(continuous = wrap(\"cor\", size = 5)), \n        lower = list(continuous = \"smooth\"))\n\nprint(plt)"
+  },
+  {
+    "id": "9d2a12c0-ecf8-4e93-8d4d-ad9736a083d9",
+    "name": "Fuzzy C-Means Clustering",
+    "description": "Soft custering algorithm proposed by Bezdek. Unlike K-means algorithm in which each data object is the member of only one cluster, a data object is the member of all clusters with varying degrees of fuzzy memberhip between 0 and 1 in FCM.",
+    "img_output": false,
+    "params": [
+      {
+        "id": "f12403d4-e423-4c98-b53d-dcdf2d40ee47",
+        "name": "From",
+        "var_name": "arg0",
+        "type": "number",
+        "description": "From index of dataset's columns.",
+        "default_value": "1"
+      },
+      {
+        "id": "76c089f5-bc32-419d-a8b4-48cf33be934e",
+        "name": "To",
+        "var_name": "arg1",
+        "type": "number",
+        "description": "To index of dataset's columns.",
+        "default_value": "4"
+      },
+      {
+        "id": "c08c8d99-daba-48ca-919c-281195ba0371",
+        "name": "Number of clusters",
+        "var_name": "arg2",
+        "type": "number",
+        "description": "K-Means++ number of clusters which should be generated by algorithm.",
+        "default_value": "3"
+      }
+    ],
+    "code": "if (!require('ppclust')) install.packages('ppclust', repos = \"http://cran.us.r-project.org\"); library('ppclust')\n library('knitr')\n x = data[,arg0:arg1]\nres.fcm <- fcm(x, centers=arg2)\n\ntbl = kable(res.fcm$u)\n tbl\n"
+  },
+  {
+    "id": "26b97a8d-0020-45bf-b7a1-45a5b8af89ac",
+    "name": "Summary",
+    "description": "Outputs simple summary of dataset.",
+    "img_output": false,
+    "params": [],
+    "code": "require('knitr')\nlibrary('knitr')\n\ns = kable(summary(data))\ns"
+  },
+  {
+    "id": "40aad8e5-35d3-40b0-a099-7836ed41e77e",
+    "name": "Covariance",
+    "description": "Prints out table of covariance between dataset's variables.",
+    "img_output": false,
+    "params": [
+      {
+        "id": "35909fb9-285e-4c3b-ad4a-f1576335e6c6",
+        "name": "From",
+        "var_name": "arg0",
+        "type": "number",
+        "description": "Dataset's column start index",
+        "default_value": "1"
+      },
+      {
+        "id": "d9608808-0e8a-4d4b-8d5f-e653fc8b62f6",
+        "name": "To",
+        "var_name": "arg1",
+        "type": "number",
+        "description": "Dataset's column end index",
+        "default_value": "4"
+      }
+    ],
+    "code": "require('knitr')\nlibrary('knitr')\n\ntbl = kable(cov(data[, arg0:arg1]))\ntbl"
+  },
+  {
+    "id": "30ca2f79-cc89-411e-8f27-43de6fae4587",
+    "name": "Bartlett’s Test",
+    "description": "Bartlett’s test detects inequality of variances.",
+    "img_output": false,
+    "params": [
+      {
+        "id": "b5526c26-4f7d-4321-a665-f77a808efda6",
+        "name": "X",
+        "var_name": "arg0",
+        "type": "select_headers",
+        "description": "Column of numeric values that represent particular samples of the population",
+        "default_value": "sepal.length"
+      },
+      {
+        "id": "e7b93b3c-3594-4cc5-8164-508ab62297b8",
+        "name": "G",
+        "var_name": "arg1",
+        "type": "select_headers",
+        "description": "Column with group values corresponding to each \"X\" value",
+        "default_value": "petal.length"
+      }
+    ],
+    "code": "require('knitr')\nlibrary('knitr')\n\n btest = data.frame(unlist(bartlett.test(list(get(arg0, data), get(arg1, data)), data=data)))\n colnames(btest)[1] <- \"Result\"\n x = kable(btest)\n x"
+  }
+]

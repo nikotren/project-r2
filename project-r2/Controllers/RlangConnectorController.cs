@@ -195,8 +195,11 @@ namespace project_r2.Controllers
                 decoded = rawToChar(base64enc::base64decode(b64data))
                 data = read.csv(text = decoded, sep = ',')
                 {1}
-                fn = tempfile(fileext = '.png')
-                png(fn)
+                fn = tempfile(fileext = '.svg')
+                if (!require('svglite')) install.packages('svglite', repos = 'http://cran.us.r-project.org');
+                require(svglite)
+                library(svglite)
+                svglite(fn, width = 5, height = 5)
                 {2}
                 dev.off()
                 encoded = base64enc::base64encode(fn)
@@ -208,8 +211,10 @@ namespace project_r2.Controllers
         private string PrepareImg(RlangRequest r)
         {
             string command_lined = SpliceText(r.command, 400);
-            return string.Format(@"fn = tempfile(fileext = '.png')
-                png(fn)
+            return string.Format(@"fn = tempfile(fileext = '.svg')
+                if (!require('svglite')) install.packages('svglite', repos = 'http://cran.us.r-project.org');
+                library(svglite)
+                svglite(fn, width = 5, height = 5)
                 {0}
                 dev.off()
                 encoded = base64enc::base64encode(fn)
